@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">hearingaid</string>
+        <string name="start">Start</string>
+        <string name="stop">Stop</string>
+        <string name="exit">Exit</string>
+        <string name="volume">volume</string>
+</resources>
