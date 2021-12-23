@@ -1,6 +1,8 @@
 package com.fiill.hearingaid;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -11,13 +13,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 
 public class MainActivity extends Activity {
+    private static final int _PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
     Button btnRecord, btnStop, btnExit;
     SeekBar skbVolume;
     boolean isRecording = false;
     static final int frequency = 44100;
-    static final int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
+    static final int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
     static final int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
     int recBufSize,playBufSize;
     AudioRecord audioRecord;
@@ -67,6 +73,19 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated method stub
             }
         });
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.RECORD_AUDIO)) {
+                // TODO: show explanation
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECORD_AUDIO},
+                        _PERMISSIONS_REQUEST_RECORD_AUDIO);
+            }
+        }
     }
 
     @Override
@@ -110,6 +129,17 @@ public class MainActivity extends Activity {
             } catch (Throwable t) {
                 System.out.print("hearing-aid exception: " + t.getMessage());
                 //Toast.makeText(MainActivity.this, t.getMessage(), 1000);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == _PERMISSIONS_REQUEST_RECORD_AUDIO) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // permission was granted, yay! Do the task you need to do.
+            } else {
+                finish();
             }
         }
     }
